@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getAccruedFees, connection, getWallet, getPersistentStats } from '@/lib/flywheel';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     try {
         const accruedFees = await getAccruedFees();
