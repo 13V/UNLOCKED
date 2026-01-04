@@ -72,7 +72,7 @@ const MILESTONES: Milestone[] = [
     id: '6',
     target: 75000,
     title: "Yield Distribution",
-    description: "50% Fees go to Buybacks and be burned the other 50% gets airdropped to holders.",
+    description: "Harmonic Distribution. 50% of fees execute automated buybacks and burns, with the remaining 50% systematically airdropped to holders.",
     icon: <Shield className="w-5 h-5" />,
     featureKey: "airdrop"
   },

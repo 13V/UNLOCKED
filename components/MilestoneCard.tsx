@@ -27,7 +27,9 @@ export default function MilestoneCard({ milestone, unlocked, idx }: MilestoneCar
             {/* Status Badge */}
             <div className={`absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 px-3 py-1 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest ${unlocked ? 'bg-black text-white' : 'bg-white text-black'}`}>
                 {unlocked ? <CheckCircle2 className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
-                {unlocked ? 'UNLOCKED' : `$${milestone.target >= 1000 ? (milestone.target / 1000) + 'k' : milestone.target} TARGET`}
+                {unlocked
+                    ? `UNLOCKED AT $${milestone.target >= 1000 ? (milestone.target / 1000) + 'k' : milestone.target} MC`
+                    : `$${milestone.target >= 1000 ? (milestone.target / 1000) + 'k' : milestone.target} TARGET`}
             </div>
 
             <div className="space-y-4">
