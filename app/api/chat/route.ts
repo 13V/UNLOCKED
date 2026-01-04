@@ -5,6 +5,8 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
+        if (!supabase) return NextResponse.json({ error: 'Supabase not configured' }, { status: 503 });
+
         const { data: messages, error } = await supabase
             .from('messages')
             .select('*')
@@ -21,6 +23,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
+        if (!supabase) return NextResponse.json({ error: 'Supabase not configured' }, { status: 503 });
+
         const { text, author } = await request.json();
 
         if (!text || !author) {

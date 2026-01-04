@@ -15,6 +15,8 @@ export default function HypeWall() {
     const [input, setInput] = useState("");
     const [handle, setHandle] = useState("");
     const [isMounted, setIsMounted] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         setIsMounted(true);
@@ -33,10 +35,15 @@ export default function HypeWall() {
     const fetchMessages = async () => {
         try {
             const res = await fetch('/api/chat');
+            if (!res.ok) throw new Error("Connection failed");
             const data = await res.json();
             setMessages(data.reverse()); // Show newest first
+            setError(false);
         } catch (e) {
             console.error("Failed to fetch intel:", e);
+            setError(true);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -89,10 +96,20 @@ export default function HypeWall() {
 
             <div className="border-t-2 border-black min-h-[400px] flex flex-col bg-black/5 p-4 md:p-8 backdrop-blur-sm">
                 <div className="flex-1 space-y-6 overflow-y-auto max-h-[600px] pr-4 custom-scrollbar">
-                    {messages.length === 0 ? (
+                    {loading ? (
                         <div className="animate-pulse flex items-center gap-2 text-black/20 font-bold uppercase text-xs">
-                            <span className="w-2 h-2 bg-black/20 rounded-full" />
+                            <span className="w-2 h-2 bg-black/20 rounded-full animate-bounce" />
                             Establishing encrypted connection...
+                        </div>
+                    ) : error ? (
+                        <div className="flex items-center gap-2 text-red-500 font-bold uppercase text-xs">
+                            <span className="w-2 h-2 bg-red-500 rounded-full" />
+                            Connection error: verify database credentials
+                        </div>
+                    ) : messages.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-full opacity-20 space-y-4 py-20">
+                            <Terminal className="w-12 h-12" />
+                            <div className="font-bold uppercase tracking-widest text-xs">No intel found. Broadcast first message.</div>
                         </div>
                     ) : (
                         messages.map((m, idx) => (
