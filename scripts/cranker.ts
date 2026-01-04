@@ -4,9 +4,9 @@ import path from 'path';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
-const EXECUTE_URL = process.env.CRANK_URL || 'http://localhost:3000/api/execute';
+const EXECUTE_URL = process.env.CRANK_URL || 'http://localhost:3001/api/execute';
 const AUTH_SECRET = process.env.AUTH_SECRET || 'void_protocol_trigger';
-const INTERVAL_MS = Number(process.env.CRANK_INTERVAL_MS) || 600000; // Default 10 minutes
+const INTERVAL_MS = Number(process.env.CRANK_INTERVAL_MS) || 60000; // Default 1 minute
 
 async function turnFlywheel() {
     try {

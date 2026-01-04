@@ -15,6 +15,7 @@ import axios from 'axios';
 import bs58 from 'bs58';
 import fs from 'fs';
 import path from 'path';
+import { getPumpMarketCap } from './bonding-curve';
 
 const STATS_PATH = path.join(process.cwd(), 'data', 'stats-db.json');
 
@@ -170,6 +171,15 @@ export async function runAutonomousCycle() {
     };
 
     try {
+        // 0. Fetch Current Market Cap for Milestone Gating
+        const currentMc = await getPumpMarketCap(TOKEN_MINT_STR);
+        console.log(`[FLY] Current Market Cap: $${Math.floor(currentMc)}`);
+
+        if (currentMc < 20000) {
+            console.log("[FLY] Gated: Market Cap below $20,000. Protocol inactive.");
+            return stats;
+        }
+
         // 1. Check & Claim Fees
         const accrued = await getAccruedFees();
         if (accrued > 0.001) {
@@ -185,7 +195,7 @@ export async function runAutonomousCycle() {
         const balance = await connection.getBalance(wallet.publicKey);
         const solBalance = balance / 1e9;
 
-        // 3. Buyback & Burn if balance > threshold (0.05 SOL)
+        // 3. Buyback if balance > threshold (0.05 SOL)
         if (solBalance > 0.05) {
             const swapAmount = solBalance - 0.01; // Keep 0.01 for gas
             console.log(`[FLY] Executing Buyback for ${swapAmount} SOL...`);
@@ -208,9 +218,14 @@ export async function runAutonomousCycle() {
             const tokensSecured = (balanceAfter - balanceBefore) / 1e6;
             stats.tokensBought = tokensSecured;
 
+            // Gating: Only burn if MC >= 45,000 (Supply Erosion Milestone)
             if (tokensSecured > 0) {
-                console.log(`[FLY] Burning ${tokensSecured} tokens...`);
-                stats.burnSignature = await burnTokens(tokensSecured);
+                if (currentMc >= 45000) {
+                    console.log(`[FLY] Supply Erosion Active: Burning ${tokensSecured} tokens...`);
+                    stats.burnSignature = await burnTokens(tokensSecured);
+                } else {
+                    console.log(`[FLY] Gated: Market Cap below $45,000. Secured ${tokensSecured} tokens stored in treasury.`);
+                }
             }
         }
 
