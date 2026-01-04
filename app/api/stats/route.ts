@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAccruedFees, connection, getWallet } from '@/lib/flywheel';
+import { getAccruedFees, connection, getWallet, getPersistentStats } from '@/lib/flywheel';
 
 export async function GET() {
     try {
@@ -12,11 +12,13 @@ export async function GET() {
             walletBalance = balance / 1e9;
         }
 
+        const pStats = getPersistentStats();
+
         return NextResponse.json({
             accruedFees,
             walletBalance,
-            totalFeesClaimed: 0.8662, // Mocking from wildfire stats for now, can be read from file later
-            totalTokensBurned: 107573489
+            totalFeesClaimed: pStats.totalFeesClaimed,
+            totalTokensBurned: pStats.totalTokensBurned
         });
     } catch (error) {
         console.error('Stats API Error:', error);

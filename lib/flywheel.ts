@@ -13,6 +13,10 @@ import {
 } from '@solana/spl-token';
 import axios from 'axios';
 import bs58 from 'bs58';
+import fs from 'fs';
+import path from 'path';
+
+const STATS_PATH = path.join(process.cwd(), 'data', 'stats-db.json');
 
 const RPC_URL = process.env.RPC_URL || 'https://api.mainnet-beta.solana.com';
 const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
@@ -28,6 +32,34 @@ export const getWallet = () => {
     } catch (e) {
         console.error("Invalid Private Key format");
         return null;
+    }
+};
+
+export const getPersistentStats = () => {
+    try {
+        if (!fs.existsSync(STATS_PATH)) {
+            const initial = { totalFeesClaimed: 0, totalTokensBurned: 0, lastUpdate: null };
+            fs.writeFileSync(STATS_PATH, JSON.stringify(initial, null, 2));
+            return initial;
+        }
+        const data = fs.readFileSync(STATS_PATH, 'utf8');
+        return JSON.parse(data);
+    } catch (e) {
+        console.error("Error reading stats db:", e);
+        return { totalFeesClaimed: 0, totalTokensBurned: 0, lastUpdate: null };
+    }
+};
+
+export const updatePersistentStats = (claimedFees: number, tokensBurned: number) => {
+    try {
+        const stats = getPersistentStats();
+        stats.totalFeesClaimed += claimedFees;
+        stats.totalTokensBurned += tokensBurned;
+        stats.lastUpdate = new Date().toISOString();
+        fs.writeFileSync(STATS_PATH, JSON.stringify(stats, null, 2));
+        return stats;
+    } catch (e) {
+        console.error("Error updating stats db:", e);
     }
 };
 
@@ -181,6 +213,9 @@ export async function runAutonomousCycle() {
                 stats.burnSignature = await burnTokens(tokensSecured);
             }
         }
+
+        // 4. Persist Results
+        updatePersistentStats(stats.feesClaimed, stats.tokensBought);
 
         return stats;
     } catch (e: any) {
