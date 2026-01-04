@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "text": "PROTOCOL_STATE: OPTIMAL",
+        "author": "SYSTEM",
+        "timestamp": "2026-01-04T10:00:00.000Z"
+    },
+    {
+        "id": 2,
+        "text": "AUTONOMOUS FLYWHEEL CONFIRMED.",
+        "author": "ANON",
+        "timestamp": "2026-01-04T10:05:00.000Z"
+    },
+    {
+        "id": 3,
+        "text": "NO MORE FAKE ROADMAPS.",
+        "author": "HOLDER_0X42",
+        "timestamp": "2026-01-04T10:10:00.000Z"
+    }
+]

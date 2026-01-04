@@ -319,7 +319,7 @@ export default function Home() {
 
         {/* COMMUNITY HUB */}
         <AnimatePresence>
-          {isUnlocked(100000) && (
+          {isUnlocked(5000) && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-40 border-t border-black pt-20">
               <HypeWall />
             </motion.div>
