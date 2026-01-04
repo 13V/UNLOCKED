@@ -33,7 +33,7 @@ const MILESTONES: Milestone[] = [
     target: 5000,
     title: "Spatial Infrastructure",
     description: "Spatial anchors and navigation nodes confirmed.",
-    icon: <Layers className="w-5 h-5 line-clamp-1" />,
+    icon: <Layers className="w-5 h-5" />,
     featureKey: "nav"
   },
   {
@@ -54,15 +54,15 @@ const MILESTONES: Milestone[] = [
   },
   {
     id: '4',
-    target: 25000,
-    title: "Liquidity Flywheel",
-    description: "Autonomous DEX payment routing engaged.",
+    target: 30000,
+    title: "Dex Payment",
+    description: "The creator fees will be used to Purchase the DexScreener Information.",
     icon: <RefreshCw className="w-5 h-5" />,
     featureKey: "dex"
   },
   {
     id: '5',
-    target: 30000,
+    target: 45000,
     title: "Supply Erosion",
     description: "Burn logic triggered by objective supply metrics.",
     icon: <Zap className="w-5 h-5" />,
@@ -70,19 +70,27 @@ const MILESTONES: Milestone[] = [
   },
   {
     id: '6',
-    target: 50000,
+    target: 75000,
     title: "Yield Distribution",
-    description: "Deterministic rewards routing for verified holders.",
+    description: "50% Fees go to Buybacks and be burned the other 50% gets airdropped to holders.",
     icon: <Shield className="w-5 h-5" />,
     featureKey: "airdrop"
   },
   {
     id: '7',
-    target: 100000,
-    title: "Full Maturity",
-    description: "The system has reached its final state of autonomy.",
+    target: 200000,
+    title: "Community DAO",
+    description: "The Community decides where funds go into bluechip tokens and distributes to holders.",
+    icon: <Layers className="w-5 h-5" />,
+    featureKey: "dao"
+  },
+  {
+    id: '8',
+    target: 500000,
+    title: "Alpha Group",
+    description: "Unlock Alpha Group and be an insider.",
     icon: <CheckCircle className="w-5 h-5" />,
-    featureKey: "full"
+    featureKey: "alpha"
   }
 ];
 
@@ -106,10 +114,10 @@ export default function Home() {
       setIsLive(true);
 
       const interval = setInterval(() => {
-        simMc += 1500;
-        if (simMc > 110000) simMc = 110000;
+        simMc += 5000;
+        if (simMc > 550000) simMc = 550000;
         setMarketCap(simMc);
-      }, 500); // Fast simulation for recording
+      }, 400); // Fast simulation for recording
       return () => clearInterval(interval);
     }
 
