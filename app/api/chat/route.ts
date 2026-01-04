@@ -1,34 +1,20 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const DB_PATH = path.join(process.cwd(), 'data', 'messages-db.json');
-
-const getMessages = () => {
-    try {
-        if (!fs.existsSync(DB_PATH)) {
-            return [];
-        }
-        const data = fs.readFileSync(DB_PATH, 'utf8');
-        return JSON.parse(data);
-    } catch (e) {
-        console.error("Error reading messages:", e);
-        return [];
-    }
-};
-
-const saveMessages = (messages: any[]) => {
-    try {
-        // Keep only last 50 messages
-        const trimmed = messages.slice(-50);
-        fs.writeFileSync(DB_PATH, JSON.stringify(trimmed, null, 2));
-    } catch (e) {
-        console.error("Error saving messages:", e);
-    }
-};
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
-    return NextResponse.json(getMessages());
+    try {
+        const { data: messages, error } = await supabase
+            .from('messages')
+            .select('*')
+            .order('timestamp', { ascending: false })
+            .limit(50);
+
+        if (error) throw error;
+        return NextResponse.json(messages?.reverse() || []); // Flip back for chronological UI
+    } catch (e: any) {
+        console.error("Chat GET Error:", e.message);
+        return NextResponse.json([], { status: 500 });
+    }
 }
 
 export async function POST(request: Request) {
@@ -39,20 +25,21 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing content' }, { status: 400 });
         }
 
-        const messages = getMessages();
-        const newMessage = {
-            id: Date.now(),
-            text: text.toUpperCase().substring(0, 280), // Sanitization
-            author: author.toUpperCase().substring(0, 20),
-            timestamp: new Date().toISOString()
-        };
+        const { data: newMessage, error } = await supabase
+            .from('messages')
+            .insert([
+                {
+                    text: text.toUpperCase().substring(0, 280),
+                    author: author.toUpperCase().substring(0, 20)
+                }
+            ])
+            .select()
+            .single();
 
-        messages.push(newMessage);
-        saveMessages(messages);
-
+        if (error) throw error;
         return NextResponse.json(newMessage);
     } catch (e: any) {
-        console.error("Chat API Error:", e.message);
+        console.error("Chat POST Error:", e.message);
         return NextResponse.json({ error: 'Server Error' }, { status: 500 });
     }
 }

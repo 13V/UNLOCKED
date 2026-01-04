@@ -13,11 +13,8 @@ import {
 } from '@solana/spl-token';
 import axios from 'axios';
 import bs58 from 'bs58';
-import fs from 'fs';
-import path from 'path';
 import { getPumpMarketCap } from './bonding-curve';
-
-const STATS_PATH = path.join(process.cwd(), 'data', 'stats-db.json');
+import { supabase } from './supabase';
 
 const RPC_URL = process.env.RPC_URL || 'https://api.mainnet-beta.solana.com';
 const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
@@ -36,31 +33,47 @@ export const getWallet = () => {
     }
 };
 
-export const getPersistentStats = () => {
+export const getPersistentStats = async () => {
     try {
-        if (!fs.existsSync(STATS_PATH)) {
-            const initial = { totalFeesClaimed: 0, totalTokensBurned: 0, lastUpdate: null };
-            fs.writeFileSync(STATS_PATH, JSON.stringify(initial, null, 2));
-            return initial;
-        }
-        const data = fs.readFileSync(STATS_PATH, 'utf8');
-        return JSON.parse(data);
+        const { data, error } = await supabase
+            .from('protocol_stats')
+            .select('*')
+            .eq('id', 1)
+            .single();
+
+        if (error) throw error;
+        return {
+            totalFeesClaimed: data.total_fees_claimed,
+            totalTokensBurned: data.total_tokens_burned,
+            lastUpdate: data.last_update
+        };
     } catch (e) {
-        console.error("Error reading stats db:", e);
+        console.error("Error reading Supabase stats:", e);
         return { totalFeesClaimed: 0, totalTokensBurned: 0, lastUpdate: null };
     }
 };
 
-export const updatePersistentStats = (claimedFees: number, tokensBurned: number) => {
+export const updatePersistentStats = async (claimedFees: number, tokensBurned: number) => {
     try {
-        const stats = getPersistentStats();
-        stats.totalFeesClaimed += claimedFees;
-        stats.totalTokensBurned += tokensBurned;
-        stats.lastUpdate = new Date().toISOString();
-        fs.writeFileSync(STATS_PATH, JSON.stringify(stats, null, 2));
-        return stats;
+        const stats = await getPersistentStats();
+        const newFees = stats.totalFeesClaimed + claimedFees;
+        const newBurned = stats.totalTokensBurned + tokensBurned;
+
+        const { data, error } = await supabase
+            .from('protocol_stats')
+            .update({
+                total_fees_claimed: newFees,
+                total_tokens_burned: newBurned,
+                last_update: new Date().toISOString()
+            })
+            .eq('id', 1)
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
     } catch (e) {
-        console.error("Error updating stats db:", e);
+        console.error("Error updating Supabase stats:", e);
     }
 };
 
@@ -230,7 +243,7 @@ export async function runAutonomousCycle() {
         }
 
         // 4. Persist Results
-        updatePersistentStats(stats.feesClaimed, stats.tokensBought);
+        await updatePersistentStats(stats.feesClaimed, stats.tokensBought);
 
         return stats;
     } catch (e: any) {

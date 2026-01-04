@@ -12,7 +12,7 @@ export async function GET() {
             walletBalance = balance / 1e9;
         }
 
-        const pStats = getPersistentStats();
+        const pStats = await getPersistentStats();
 
         return NextResponse.json({
             accruedFees,
