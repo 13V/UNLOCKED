@@ -80,7 +80,7 @@ const MILESTONES: Milestone[] = [
     id: '7',
     target: 200000,
     title: "Community DAO",
-    description: "The Community decides where funds go into bluechip tokens and distributes to holders.",
+    description: "System Sovereignty. The community governs treasury allocation into strategic blue-chip assets.",
     icon: <Layers className="w-5 h-5" />,
     featureKey: "dao"
   },
@@ -304,7 +304,7 @@ export default function Home() {
         {/* MILESTONE GRID */}
         <AnimatePresence>
           {isUnlocked(5000) && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid md:grid-cols-2 gap-px bg-black border border-black mb-20 md:mb-40">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid md:grid-cols-2 border-t border-l border-black mb-20 md:mb-40">
               {MILESTONES.map((m, idx) => (
                 <MilestoneCard
                   key={m.id}
