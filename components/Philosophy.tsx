@@ -8,7 +8,7 @@ export default function Philosophy() {
 
             <div className="space-y-10">
                 <h2 className="text-sm font-bold tracking-[0.5em] uppercase opacity-40">01 / Objective</h2>
-                <div className="space-y-4 text-4xl font-bold tracking-tighter leading-[0.9]">
+                <div className="space-y-4 text-3xl md:text-4xl font-bold tracking-tighter leading-[0.9]">
                     <p>Growth is not a gift.</p>
                     <p>Growth is a calculated result.</p>
                 </div>
@@ -17,8 +17,8 @@ export default function Philosophy() {
             <div className="space-y-10">
                 <h2 className="text-sm font-bold tracking-[0.5em] uppercase opacity-40">02 / Sovereignty</h2>
                 <div className="space-y-8">
-                    <p className="text-5xl font-bold tracking-tighter uppercase leading-[0.8]">consensus controls<br />the protocol</p>
-                    <p className="text-5xl font-bold tracking-tighter uppercase leading-[0.8]">the interface<br />validates the pool</p>
+                    <p className="text-4xl md:text-5xl font-bold tracking-tighter uppercase leading-[0.8]">consensus controls<br />the protocol</p>
+                    <p className="text-4xl md:text-5xl font-bold tracking-tighter uppercase leading-[0.8]">the interface<br />validates the pool</p>
                     <div className="pt-4 space-y-2">
                         <p className="text-lg font-bold opacity-40 uppercase">Human interference is a protocol violation</p>
                         <p className="text-2xl font-black uppercase underline decoration-4 underline-offset-8">Execution is deterministic. Not manual.</p>
@@ -34,7 +34,7 @@ export default function Philosophy() {
                         <p className="uppercase">No validation without pressure.</p>
                         <p className="uppercase">No pressure without market survival.</p>
                     </div>
-                    <p className="text-8xl font-black border-b-8 border-black pb-4 inline-block mt-8">LOGIC OVER ALL.</p>
+                    <p className="text-6xl md:text-8xl font-black border-b-8 border-black pb-4 inline-block mt-8">LOGIC OVER ALL.</p>
                 </div>
             </div>
 

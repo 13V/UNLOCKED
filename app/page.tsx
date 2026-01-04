@@ -148,7 +148,7 @@ export default function Home() {
       <div className="max-w-4xl mx-auto px-6 py-20 relative">
 
         {/* TOP STATUS BAR */}
-        <header className="flex items-center justify-between mb-32">
+        <header className="flex flex-col md:flex-row items-center justify-between mb-16 md:mb-32 gap-6">
           <AnimatePresence>
             {isUnlocked(5000) ? (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3">
@@ -192,7 +192,7 @@ export default function Home() {
         </header>
 
         {/* HERO - DYNAMIC GATING */}
-        <div className={`space-y-6 transition-all duration-1000 ${isUnlocked(5000) ? 'mb-40' : 'h-[60vh] flex flex-col justify-center'}`}>
+        <div className={`space-y-6 transition-all duration-1000 ${isUnlocked(5000) ? 'mb-20 md:mb-40' : 'h-[60vh] flex flex-col justify-center'}`}>
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">
               <Activity className="w-3 h-3" />
@@ -220,7 +220,7 @@ export default function Home() {
         {/* PROGRESS BAR */}
         <AnimatePresence>
           {isUnlocked(5000) && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-40 space-y-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-20 md:mb-40 space-y-4">
               <div className="flex justify-between font-bold text-[10px] uppercase tracking-widest">
                 <span>Next Target: ${MILESTONES.find(m => m.target > marketCap)?.target.toLocaleString() || "MAX"}</span>
                 <span>{Math.floor(getProgress())}%</span>
@@ -235,7 +235,7 @@ export default function Home() {
         {/* PHILOSOPHY */}
         <AnimatePresence>
           {isUnlocked(10000) && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-40">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-20 md:mb-40">
               <Philosophy />
             </motion.div>
           )}
@@ -244,7 +244,7 @@ export default function Home() {
         {/* BOT TERMINAL */}
         <AnimatePresence>
           {isUnlocked(20000) && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-40 border-2 border-black p-10 space-y-12">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-20 md:mb-40 border-2 border-black p-6 md:p-10 space-y-12">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <Terminal className="w-6 h-6" />
@@ -295,16 +295,15 @@ export default function Home() {
 
         {/* MILESTONE GRID */}
         <AnimatePresence>
-          {isUnlocked(10000) && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid md:grid-cols-2 gap-1 gap-y-1 border-t border-l border-black">
-              {MILESTONES.map((m) => (
-                <div key={m.id} className={`p-8 border-r border-b border-black ${isUnlocked(m.target) ? 'bg-white' : 'bg-black text-white opacity-10'}`}>
-                  <div className="flex items-center gap-4 mb-4">
-                    {m.icon}
-                    <span className="font-bold uppercase tracking-tighter text-lg">{m.title}</span>
-                  </div>
-                  <p className="text-sm border-t border-black/10 pt-4 opacity-60 italic">{m.description}</p>
-                </div>
+          {isUnlocked(5000) && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid md:grid-cols-2 gap-px bg-black border border-black mb-20 md:mb-40">
+              {MILESTONES.map((m, idx) => (
+                <MilestoneCard
+                  key={m.id}
+                  milestone={m}
+                  unlocked={isUnlocked(m.target)}
+                  idx={idx}
+                />
               ))}
             </motion.div>
           )}
