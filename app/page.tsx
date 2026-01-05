@@ -98,29 +98,10 @@ export default function Home() {
   const [marketCap, setMarketCap] = useState(0);
   const [stats, setStats] = useState({ accruedFees: 0, walletBalance: 0, totalFeesClaimed: 0, totalTokensBurned: 0 });
   const [isLive, setIsLive] = useState(false);
-  const [isSimulated, setIsSimulated] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const params = new URLSearchParams(window.location.search);
-    const idSim = params.get('simulation') === 'true';
-    setIsSimulated(idSim);
-
-    if (idSim) {
-      let simMc = 0;
-      const simStats = { accruedFees: 0.85, walletBalance: 0.12, totalFeesClaimed: 2.1, totalTokensBurned: 156000000 };
-      setStats(simStats);
-      setIsLive(true);
-
-      const interval = setInterval(() => {
-        simMc += 5000;
-        if (simMc > 550000) simMc = 550000;
-        setMarketCap(simMc);
-      }, 400); // Fast simulation for recording
-      return () => clearInterval(interval);
-    }
-
     const fetchData = async () => {
       try {
         const mcRes = await fetch('/api/market-cap');
@@ -167,26 +148,6 @@ export default function Home() {
           </AnimatePresence>
 
           <div className="flex items-center gap-4">
-            {mounted && (
-              <button
-                onClick={() => {
-                  window.location.href = isSimulated ? '/' : '?simulation=true';
-                }}
-                className="px-4 py-1.5 bg-black text-white text-[10px] font-bold uppercase tracking-widest hover:bg-black/80 transition-all rounded-full flex items-center gap-2"
-              >
-                {isSimulated ? (
-                  <>
-                    <Activity className="w-3 h-3" />
-                    Live_Mode
-                  </>
-                ) : (
-                  <>
-                    <Zap className="w-3 h-3" />
-                    Simulate_Unlocks
-                  </>
-                )}
-              </button>
-            )}
             {isLive && (
               <div className="flex items-center gap-2 px-4 py-1.5 border border-black rounded-full">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
