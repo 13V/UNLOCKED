@@ -186,11 +186,26 @@ export async function runAutonomousCycle() {
     try {
         // 0. Fetch Current Market Cap for Milestone Gating
         const currentMc = await getPumpMarketCap(TOKEN_MINT_STR);
-        console.log(`[FLY] Current Market Cap: $${Math.floor(currentMc)}`);
+        console.log(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+        console.log(`[FLY] 📊 Current Market Cap: $${Math.floor(currentMc).toLocaleString()}`);
 
+        // Check Protocol Activation Threshold ($20k)
         if (currentMc < 20000) {
-            console.log("[FLY] Gated: Market Cap below $20,000. Protocol inactive.");
+            console.log(`[FLY] 🔒 PROTOCOL GATED: MC below $20,000 threshold`);
+            console.log(`[FLY] ⏳ Need $${(20000 - currentMc).toFixed(0)} more to activate`);
+            console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
             return stats;
+        }
+
+        console.log(`[FLY] ✅ PROTOCOL ACTIVE: Threshold met!`);
+
+        // Check Burn Threshold ($45k)
+        const burnEnabled = currentMc >= 45000;
+        if (burnEnabled) {
+            console.log(`[FLY] 🔥 BURN MODE: Active`);
+        } else {
+            console.log(`[FLY] 💰 ACCUMULATION MODE: Burns start at $45k MC`);
+            console.log(`[FLY] ⏳ Need $${(45000 - currentMc).toFixed(0)} more for burns`);
         }
 
         // 1. Check & Claim Fees
